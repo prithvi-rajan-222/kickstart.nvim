@@ -97,6 +97,12 @@ vim.g.have_nerd_font = true
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
+-- Tab width
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
+vim.o.softtabstop = 4
+vim.o.expandtab = true
+
 -- Make line numbers default
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
@@ -239,8 +245,6 @@ rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added via a link or github org/name. To run setup automatically, use `opts = {}`
-  { 'NMAC427/guess-indent.nvim', opts = {} },
-
   -- Alternatively, use `config = function() ... end` for full control over the configuration.
   -- If you prefer to call `setup` explicitly, use:
   --    {
@@ -586,7 +590,7 @@ require('lazy').setup({
       --  See `:help lsp-config` for information about keys and how to configure
       ---@type table<string, vim.lsp.Config>
       local servers = {
-        -- clangd = {},
+        clangd = {},
         -- gopls = {},
         pyrefly = {},
         -- rust_analyzer = {},
@@ -599,7 +603,9 @@ require('lazy').setup({
         tailwindcss = {},
 
         stylua = {}, -- Used to format Lua code
-
+        sourcekit = {
+          cmd = { 'xcrun', 'sourcekit-lsp' },
+        },
         -- Special Lua Config, as recommended by neovim help docs
         lua_ls = {
           on_init = function(client)
@@ -639,7 +645,7 @@ require('lazy').setup({
       -- You can press `g?` for help in this menu.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
-        -- You can add other tools here that you want Mason to install
+        'prettier',
       })
 
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -683,11 +689,13 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        javascript = { 'prettier' },
+        javascriptreact = { 'prettier' },
+        typescript = { 'prettier' },
+        typescriptreact = { 'prettier' },
+        css = { 'prettier' },
+        html = { 'prettier' },
+        json = { 'prettier' },
       },
     },
   },
@@ -937,4 +945,4 @@ require('lazy').setup({
 })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
+-- vim: ts=4 sts=4 sw=4 et

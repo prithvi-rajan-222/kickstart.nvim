@@ -7,7 +7,11 @@
 vim.keymap.set('n', '<leader>cd', vim.cmd.Ex)
 vim.g.tmux_navigator_disable_when_zoomed = 1
 vim.keymap.set('i', '<Tab>', '<Tab>', { noremap = true })
+-- compile
+vim.keymap.set('n', '<leader>b', ':!./compile.sh<CR>')
 
+-- run with input
+vim.keymap.set('n', '<leader>r', ':!./A < input.txt<CR>')
 -- [[ Diagnostic Config ]]
 -- See :help vim.diagnostic.Opts
 vim.diagnostic.config {
@@ -61,5 +65,8 @@ return {
       { '<c-l>', '<cmd><C-U>TmuxNavigateRight<cr>' },
       { '<c-\\>', '<cmd><C-U>TmuxNavigatePrevious<cr>' },
     },
+  },
+  { -- Git plugin
+    'tpope/vim-fugitive',
   },
 }
