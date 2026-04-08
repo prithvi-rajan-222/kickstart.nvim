@@ -3,34 +3,80 @@
 --
 -- See the kickstart.nvim README for more information
 
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
+vim.o.softtabstop = 4
+vim.o.expandtab = true
+vim.o.relativenumber = true
+
 -- [[ Custom Keymaps ]]
 vim.keymap.set('n', '<leader>cd', vim.cmd.Ex)
 vim.g.tmux_navigator_disable_when_zoomed = 1
 vim.keymap.set('i', '<Tab>', '<Tab>', { noremap = true })
--- compile
 vim.keymap.set('n', '<leader>b', ':!./compile.sh<CR>')
-
--- run with input
 vim.keymap.set('n', '<leader>r', ':!./A < input.txt<CR>')
--- [[ Diagnostic Config ]]
--- See :help vim.diagnostic.Opts
-vim.diagnostic.config {
-  update_in_insert = false,
-  severity_sort = true,
-  float = { border = 'rounded', source = 'if_many' },
-  underline = { severity = { min = vim.diagnostic.severity.WARN } },
 
-  -- Can switch between these as you prefer
-  virtual_text = true, -- Text shows up at the end of the line
-  virtual_lines = false, -- Text shows up underneath the line, with virtual lines
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'VeryLazy',
+  group = vim.api.nvim_create_augroup('custom-kickstart-overrides', { clear = true }),
+  callback = function()
+    local extra_servers = {
+      clangd = {},
+      pyrefly = {},
+      sourcekit = {
+        cmd = { 'xcrun', 'sourcekit-lsp' },
+      },
+      tailwindcss = {},
+      ts_ls = {},
+    }
 
-  -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
-  jump = { float = true },
-}
+    for name, config in pairs(extra_servers) do
+      vim.lsp.config(name, config)
+      vim.lsp.enable(name)
+    end
+
+    local ok_conform, conform = pcall(require, 'conform')
+    if ok_conform then
+      conform.setup {
+        notify_on_error = false,
+        format_on_save = function(bufnr)
+          local disable_filetypes = { c = true, cpp = true }
+          if disable_filetypes[vim.bo[bufnr].filetype] then return nil end
+
+          return {
+            timeout_ms = 500,
+            lsp_format = 'fallback',
+          }
+        end,
+        formatters_by_ft = {
+          css = { 'prettier' },
+          html = { 'prettier' },
+          javascript = { 'prettier' },
+          javascriptreact = { 'prettier' },
+          json = { 'prettier' },
+          lua = { 'stylua' },
+          typescript = { 'prettier' },
+          typescriptreact = { 'prettier' },
+        },
+      }
+    end
+
+    local ok_treesitter, treesitter = pcall(require, 'nvim-treesitter')
+    if ok_treesitter then
+      treesitter.install { 'javascript', 'jsdoc', 'tsx', 'typescript' }
+    end
+  end,
+})
 
 ---@module 'lazy'
 ---@type LazySpec
 return {
+  require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.gitsigns',
+
   {
     'windwp/nvim-ts-autotag',
     lazy = false,
