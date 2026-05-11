@@ -76,6 +76,7 @@ return {
   require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.gitsigns',
+  require 'custom.plugins.opencode',
 
   {
     'windwp/nvim-ts-autotag',
