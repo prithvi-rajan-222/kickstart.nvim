@@ -75,7 +75,6 @@ return {
   require 'kickstart.plugins.indent_line',
   require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
-  require 'kickstart.plugins.gitsigns',
   require 'custom.plugins.opencode',
 
   {
@@ -112,8 +111,5 @@ return {
       { '<c-l>', '<cmd><C-U>TmuxNavigateRight<cr>' },
       { '<c-\\>', '<cmd><C-U>TmuxNavigatePrevious<cr>' },
     },
-  },
-  { -- Git plugin
-    'tpope/vim-fugitive',
   },
 }
