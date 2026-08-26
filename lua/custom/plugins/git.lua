@@ -24,7 +24,9 @@ local function setup_diffview_follow()
     desc = 'Keep Diffview comparison panes aligned with local file navigation',
     callback = function(event)
       local view = require('diffview.lib').get_current_view()
-      if not (view and view.set_file_by_path and view.cur_layout and view.panel.cur_file) then return end
+      if not view then return end
+      assert(view.set_file_by_path, 'Diffview follow requires DiffView:set_file_by_path()')
+      if not (view.cur_layout and view.panel.cur_file) then return end
       if following[view] or vim.bo[event.buf].buftype ~= '' then return end
 
       local main = view.cur_layout:get_main_win()
