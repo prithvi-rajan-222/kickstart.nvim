@@ -66,23 +66,11 @@ return {
       { '<leader>gl', '<cmd>DiffviewFileHistory %<cr>', desc = 'Git log current file' },
       { '<leader>gL', '<cmd>DiffviewFileHistory<cr>', desc = 'Git log repository' },
     },
-    opts = function()
-      local actions = require('diffview.config').actions
-
-      return {
-        default_args = {
-          DiffviewOpen = { '--imply-local' },
-        },
-        keymaps = {
-          file_panel = {
-            { 'n', 'j', false },
-            { 'n', 'k', false },
-            { 'n', 'n', actions.next_entry, { desc = 'Next file' } },
-            { 'n', 'e', actions.prev_entry, { desc = 'Previous file' } },
-          },
-        },
-      }
-    end,
+    opts = {
+      default_args = {
+        DiffviewOpen = { '--imply-local' },
+      },
+    },
   },
 
   {
