@@ -5,12 +5,12 @@ local function start_branch_review()
   assert(result.code == 0, result.stderr)
 
   require('gitsigns').change_base(vim.trim(result.stdout), true)
-  vim.cmd('DiffviewOpen ' .. target .. '...HEAD')
+  vim.cmd('CodeDiff ' .. target .. '...')
 end
 
-local function close_review()
+local function start_working_tree_review()
   require('gitsigns').reset_base(true)
-  vim.cmd 'DiffviewClose'
+  vim.cmd 'CodeDiff'
 end
 
 ---@module 'lazy'
@@ -49,26 +49,40 @@ return {
   },
 
   {
-    'dlyongemallo/diffview-plus.nvim',
+    'esmuellert/codediff.nvim',
     version = '*',
-    main = 'diffview',
-    cmd = {
-      'DiffviewOpen',
-      'DiffviewClose',
-      'DiffviewFocusFiles',
-      'DiffviewFileHistory',
-    },
+    cmd = 'CodeDiff',
     keys = {
-      { '<leader>go', '<cmd>DiffviewOpen<cr>', desc = 'Git review working tree' },
+      { '<leader>go', start_working_tree_review, desc = 'Git review working tree' },
       { '<leader>gv', start_branch_review, desc = 'Git review branch' },
-      { '<leader>gq', close_review, desc = 'Git close review' },
-      { '<leader>gf', '<cmd>DiffviewFocusFiles<cr>', desc = 'Git focus changed files' },
-      { '<leader>gl', '<cmd>DiffviewFileHistory %<cr>', desc = 'Git log current file' },
-      { '<leader>gL', '<cmd>DiffviewFileHistory<cr>', desc = 'Git log repository' },
+      { '<leader>gl', '<cmd>CodeDiff history HEAD~20 %<cr>', desc = 'Git log current file' },
+      { '<leader>gL', '<cmd>CodeDiff history<cr>', desc = 'Git log repository' },
     },
+    init = function()
+      local group = vim.api.nvim_create_augroup('codediff_gitsigns_base', { clear = true })
+
+      vim.api.nvim_create_autocmd('User', {
+        group = group,
+        pattern = 'CodeDiffClose',
+        callback = function() require('gitsigns').reset_base(true) end,
+      })
+    end,
     opts = {
-      default_args = {
-        DiffviewOpen = { '--imply-local' },
+      diff = {
+        layout = 'side-by-side',
+      },
+      explorer = {
+        position = 'left',
+        hidden = false,
+        initial_focus = 'modified',
+        view_mode = 'list',
+      },
+      keymaps = {
+        view = {
+          quit = { 'q', '<leader>gq' },
+          toggle_explorer = '<leader>ge',
+          focus_explorer = '<leader>gf',
+        },
       },
     },
   },
