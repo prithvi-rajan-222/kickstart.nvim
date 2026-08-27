@@ -55,7 +55,7 @@ return {
     keys = {
       { '<leader>go', start_working_tree_review, desc = 'Git review working tree' },
       { '<leader>gv', start_branch_review, desc = 'Git review branch' },
-      { '<leader>gl', '<cmd>CodeDiff history HEAD~20 %<cr>', desc = 'Git log current file' },
+      { '<leader>gl', '<cmd>CodeDiff history %<cr>', desc = 'Git log current file' },
       { '<leader>gL', '<cmd>CodeDiff history<cr>', desc = 'Git log repository' },
     },
     init = function()
