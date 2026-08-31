@@ -13,6 +13,31 @@ local function start_working_tree_review()
   vim.cmd 'CodeDiff'
 end
 
+local function start_commit_review()
+  local actions = require 'telescope.actions'
+  local action_state = require 'telescope.actions.state'
+
+  require('telescope.builtin').git_commits {
+    prompt_title = 'Compare working tree against commit',
+    attach_mappings = function(prompt_bufnr)
+      -- This picker selects a review baseline; it must not reset the repository.
+      for _, key in ipairs { '<C-r>m', '<C-r>s', '<C-r>h' } do
+        vim.keymap.del({ 'i', 'n' }, key, { buffer = prompt_bufnr })
+      end
+
+      actions.select_default:replace(function()
+        local selection = action_state.get_selected_entry()
+        if not selection then return end
+        actions.close(prompt_bufnr)
+
+        require('gitsigns').change_base(selection.value, true)
+        vim.cmd.CodeDiff(selection.value)
+      end)
+      return true
+    end,
+  }
+end
+
 ---@module 'lazy'
 ---@type LazySpec
 return {
@@ -55,10 +80,14 @@ return {
     keys = {
       { '<leader>go', start_working_tree_review, desc = 'Git review working tree' },
       { '<leader>gv', start_branch_review, desc = 'Git review branch' },
+      { '<leader>gc', start_commit_review, desc = 'Git review against commit' },
       { '<leader>gl', '<cmd>CodeDiff history %<cr>', desc = 'Git log current file' },
       { '<leader>gL', '<cmd>CodeDiff history<cr>', desc = 'Git log repository' },
     },
     init = function()
+      -- Keep jump-forward distinct from CodeDiff's Tab mapping in supported terminals.
+      vim.keymap.set('n', '<C-i>', '<C-i>', { desc = 'Jump forward' })
+
       local group = vim.api.nvim_create_augroup('codediff_gitsigns_base', { clear = true })
 
       vim.api.nvim_create_autocmd('User', {
@@ -75,13 +104,15 @@ return {
         position = 'left',
         hidden = false,
         initial_focus = 'modified',
-        view_mode = 'list',
+        view_mode = 'tree',
       },
       keymaps = {
         view = {
           quit = { 'q', '<leader>gq' },
           toggle_explorer = '<leader>ge',
           focus_explorer = '<leader>gf',
+          next_file = '<Tab>',
+          prev_file = '<S-Tab>',
         },
       },
     },
