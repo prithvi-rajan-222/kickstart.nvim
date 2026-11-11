@@ -11,7 +11,6 @@ vim.o.relativenumber = true
 
 -- [[ Custom Keymaps ]]
 vim.keymap.set('n', '<leader>cd', vim.cmd.Ex)
-vim.g.tmux_navigator_disable_when_zoomed = 1
 vim.keymap.set('i', '<Tab>', '<Tab>', { noremap = true })
 vim.keymap.set('n', '<leader>b', ':!./compile.sh<CR>')
 vim.keymap.set('n', '<leader>r', ':!./A < input.txt<CR>')
@@ -89,27 +88,6 @@ return {
           enable_close = false,
         },
       },
-    },
-  },
-
-  {
-    'christoomey/vim-tmux-navigator',
-    -- Keep the plugin's own <C-h/j/k/l> maps from replacing the Rex-aware keys below.
-    init = function() vim.g.tmux_navigator_no_mappings = 1 end,
-    cmd = {
-      'TmuxNavigateLeft',
-      'TmuxNavigateDown',
-      'TmuxNavigateUp',
-      'TmuxNavigateRight',
-      'TmuxNavigatePrevious',
-      'TmuxNavigatorProcessList',
-    },
-    keys = {
-      { '<c-h>', function() require('custom.rex_navigator').navigate 'h' end, desc = 'Move focus left (nvim, Rex or tmux)' },
-      { '<c-j>', function() require('custom.rex_navigator').navigate 'j' end, desc = 'Move focus down (nvim, Rex or tmux)' },
-      { '<c-k>', function() require('custom.rex_navigator').navigate 'k' end, desc = 'Move focus up (nvim, Rex or tmux)' },
-      { '<c-l>', function() require('custom.rex_navigator').navigate 'l' end, desc = 'Move focus right (nvim, Rex or tmux)' },
-      { '<c-\\>', '<cmd><C-U>TmuxNavigatePrevious<cr>' },
     },
   },
 }
