@@ -62,9 +62,7 @@ vim.api.nvim_create_autocmd('User', {
     end
 
     local ok_treesitter, treesitter = pcall(require, 'nvim-treesitter')
-    if ok_treesitter then
-      treesitter.install { 'javascript', 'jsdoc', 'tsx', 'typescript' }
-    end
+    if ok_treesitter then treesitter.install { 'javascript', 'jsdoc', 'tsx', 'typescript' } end
   end,
 })
 
@@ -105,10 +103,10 @@ return {
       'TmuxNavigatorProcessList',
     },
     keys = {
-      { '<c-h>', '<cmd><C-U>TmuxNavigateLeft<cr>' },
-      { '<c-j>', '<cmd><C-U>TmuxNavigateDown<cr>' },
-      { '<c-k>', '<cmd><C-U>TmuxNavigateUp<cr>' },
-      { '<c-l>', '<cmd><C-U>TmuxNavigateRight<cr>' },
+      { '<c-h>', function() require('custom.rex_navigator').navigate 'h' end, desc = 'Move focus left (nvim, Rex or tmux)' },
+      { '<c-j>', function() require('custom.rex_navigator').navigate 'j' end, desc = 'Move focus down (nvim, Rex or tmux)' },
+      { '<c-k>', function() require('custom.rex_navigator').navigate 'k' end, desc = 'Move focus up (nvim, Rex or tmux)' },
+      { '<c-l>', function() require('custom.rex_navigator').navigate 'l' end, desc = 'Move focus right (nvim, Rex or tmux)' },
       { '<c-\\>', '<cmd><C-U>TmuxNavigatePrevious<cr>' },
     },
   },
