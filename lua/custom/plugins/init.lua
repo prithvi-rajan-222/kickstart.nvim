@@ -94,6 +94,8 @@ return {
 
   {
     'christoomey/vim-tmux-navigator',
+    -- Keep the plugin's own <C-h/j/k/l> maps from replacing the Rex-aware keys below.
+    init = function() vim.g.tmux_navigator_no_mappings = 1 end,
     cmd = {
       'TmuxNavigateLeft',
       'TmuxNavigateDown',

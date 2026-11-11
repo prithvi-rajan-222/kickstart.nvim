@@ -1,8 +1,10 @@
 -- ctrl+h/j/k/l across nvim splits and terminal-multiplexer panes.
 --
 -- Inside Rex (REX_SESSION is set): move between nvim windows, and at the edge
--- ask Rex to focus the neighbouring pane. Rex's init.lua passes ctrl+h/j/k/l to
--- nvim when nvim is in front, so both halves are needed.
+-- ask the Rex server to focus the neighbouring pane. `rex focus` works without
+-- the app's Remote Control setting, which `rex do pane.focus` needs.
+-- Rex's init.lua passes ctrl+h/j/k/l to nvim when nvim is in front, so both
+-- halves are needed.
 -- Elsewhere: fall back to vim-tmux-navigator, as before.
 local M = {}
 
@@ -23,7 +25,7 @@ function M.navigate(key)
   end
   local win = vim.fn.winnr()
   vim.cmd('wincmd ' .. key)
-  if vim.fn.winnr() == win then vim.fn.jobstart { rex_cli(), 'do', 'pane.focus', 'direction=' .. directions[key] } end
+  if vim.fn.winnr() == win then vim.fn.jobstart { rex_cli(), 'focus', directions[key] } end
 end
 
 return M
